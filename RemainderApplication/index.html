@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Reminder App</title>
+  <link rel="stylesheet" href="https://cdn.tailwindcss.com/2.2.17/tailwind.min.css">
+  <style>
+    /* Custom styles */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="container">
+    <h1 class="text-3xl font-bold text-center mb-8">Reminder App</h1>
+    <div class="mb-4">
+      <label for="date" class="block mb-2">Date:</label>
+      <input type="date" id="date" name="date" class="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:border-blue-500" onchange="setDayFromSelectedDate()">
+    </div>
+    <div class="mb-4">
+      <label for="day" class="block mb-2">Day of the week:</label>
+      <input type="text" id="day" name="day" class="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:border-blue-500" readonly>
+    </div>
+    <div class="mb-4">
+      <label for="time" class="block mb-2">Time:</label>
+      <input type="time" id="time" name="time" class="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:border-blue-500">
+    </div>
+    <div class="mb-4">
+      <label for="activity" class="block mb-2">Activity:</label>
+      <select id="activity" name="activity" class="border border-gray-300 px-4 py-2 rounded focus:outline-none focus:border-blue-500">
+        <option value="Wake up">Wake up</option>
+        <option value="Go to gym">Go to gym</option>
+        <option value="Breakfast">Breakfast</option>
+        <option value="Meetings">Meetings</option>
+        <option value="Lunch">Lunch</option>
+        <option value="Quick nap">Quick nap</option>
+        <option value="Go to library">Go to library</option>
+        <option value="Dinner">Dinner</option>
+        <option value="Go to sleep">Go to sleep</option>
+      </select>
+    </div>
+    <button onclick="setReminder()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4">Set Reminder</button>
+  </div>
+
+  <script>
+    function setDayFromSelectedDate() {
+      const dateInput = document.getElementById('date');
+      const dayInput = document.getElementById('day');
+
+      const selectedDate = new Date(dateInput.value);
+      const options = { weekday: 'long' };
+      const dayOfWeek = new Intl.DateTimeFormat('en-US', options).format(selectedDate);
+
+      dayInput.value = dayOfWeek;
+    }
+
+    function setReminder() {
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const activity = document.getElementById('activity').value;
+
+      const reminder = {
+        date,
+        time,
+        activity
+      };
+
+      // Send the reminder data to the main process
+      window.ipcRenderer.send('setReminder', reminder);
+    }
+  </script>
+  <script src="./renderer.js"></script>
+</body>
+</html>
